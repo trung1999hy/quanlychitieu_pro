@@ -1,0 +1,161 @@
+package com.example.quanlychitieu.ui.type_note
+
+import android.app.AlertDialog
+import android.view.LayoutInflater
+import android.view.View
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+
+import com.example.quanlychitieu.base.BaseFragmentWithBinding
+import com.example.quanlychitieu.model.NoteType
+import com.example.quanlychitieu.ui.type_note.note.NoteFragment
+import com.example.quanlychitieu.utils.click
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.thn.quanlychitieu.R
+import com.thn.quanlychitieu.databinding.DialogMoreItemClickBinding
+import com.thn.quanlychitieu.databinding.DialogNewFolderBinding
+import com.thn.quanlychitieu.databinding.FragmentNoteTypeBinding
+
+class NoteTypeFragment : BaseFragmentWithBinding<FragmentNoteTypeBinding>() {
+
+    companion object {
+        fun newInstance() = NoteTypeFragment().apply {
+        }
+    }
+
+    private lateinit var viewModel: NoteTypeViewModel
+
+    private lateinit var adapter: NoteTypeAdapter
+
+
+    override fun getViewBinding(inflater: LayoutInflater): FragmentNoteTypeBinding {
+        viewModel = ViewModelProvider(
+            this,
+            NoteTypeViewModel.NoteTypeViewModelFactory(this.requireContext())
+        )[NoteTypeViewModel::class.java]
+        return FragmentNoteTypeBinding.inflate(inflater)
+    }
+
+
+    override fun init() {
+        adapter = NoteTypeAdapter({
+            showBottomSheetDialog(it)
+        }, {
+            mainActivity.addFragment(
+                this.requireParentFragment(),
+                NoteFragment.newInstance(it.title ?: "")
+            )
+        })
+        binding.rvList.adapter = adapter
+
+        binding.rvList.addItemDecoration(
+            DividerItemDecoration(
+                activity,
+                LinearLayoutManager.VERTICAL
+            )
+        )
+    }
+
+    override fun initData() {
+        viewModel.getListNoteType()
+        viewModel.listNoteType.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                binding.texterr.visibility = View.GONE
+                adapter.setData(it.reversed())
+            } else {
+                adapter.setData(listOf())
+                binding.texterr.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    override fun initAction() {
+        setMenuClick()
+    }
+
+    private fun showBottomSheetNewFolderDialog() {
+        val binding =
+            DialogNewFolderBinding.inflate(
+                LayoutInflater.from(requireContext()),
+                null,
+                false
+            )
+        val dialog = BottomSheetDialog(requireContext())
+        binding.cancel.click {
+            dialog.dismiss()
+        }
+        binding.save.click {
+            if (binding.title.text?.trim()?.isNotEmpty() == true) {
+                val noteType = NoteType(title = binding.title.text?.trim().toString())
+                viewModel.setNoteType(noteType)
+                dialog.dismiss()
+            }
+
+        }
+        binding.cancel.click {
+            dialog.dismiss()
+        }
+        dialog.setContentView(binding.root)
+        dialog.show()
+    }
+
+    fun showBottomSheetDialog(noteType: NoteType) {
+        val binding = DialogMoreItemClickBinding.inflate(
+            LayoutInflater.from(requireContext()),
+            null,
+            false
+        )
+        val dialog = BottomSheetDialog(requireContext())
+        binding.viewEditButton.click {
+            binding.viewButton.visibility = View.GONE
+            binding.viewEdit.visibility = View.VISIBLE
+            binding.title.setText(noteType.title)
+        }
+        binding.save.click {
+            if (binding.title.text?.trim()?.isNotEmpty() == true) {
+                noteType.title = binding.title.text?.trim().toString()
+                viewModel.updateTitleNoteType(noteType)
+                dialog.dismiss()
+            }
+        }
+        binding.viewRemove.click {
+            removeNoteType(noteType)
+            dialog.dismiss()
+        }
+
+        binding.cancel.click {
+            dialog.dismiss()
+        }
+
+        dialog.setContentView(binding.root)
+        dialog.show()
+    }
+
+    private fun removeNoteType(noteType: NoteType) {
+        val dialogRemove: AlertDialog = AlertDialog.Builder(requireContext()).apply {
+            setTitle("Xóa ?")
+            setMessage("Bạn có chắc muốn xóa ?")
+            setPositiveButton("Đồng ý") { dialog, id ->
+                viewModel.deleteNoteType(noteType)
+            }
+            setNegativeButton("Đóng") { dialog, id ->
+                dialog.dismiss()
+            }
+        }.create()
+        dialogRemove.show()
+    }
+
+    private fun setMenuClick() {
+        binding.toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.addFolder -> {
+                    showBottomSheetNewFolderDialog()
+                    true
+                }
+
+                else -> false
+            }
+        }
+    }
+}
