@@ -91,6 +91,7 @@ class EditNoteFragment : BaseFragmentWithBinding<FragmentEditNoteBinding>() {
         }
         binding?.title?.setText(note?.title ?: "")
         binding?.container?.setText(note?.container ?: "")
+        viewModel.setTitleLength(note?.container?.trim()?.length ?: 0)
     }
 
 
@@ -102,7 +103,7 @@ class EditNoteFragment : BaseFragmentWithBinding<FragmentEditNoteBinding>() {
                     mainActivity.onPrepareOptionsMenu(menu).apply {
                         mainActivity.invalidateOptionsMenu()
                     }
-                    viewModel.setTitleLength(text?.trim()?.length ?: 0)
+
                 }
             } else {
                 showCheckTitle = false
@@ -118,7 +119,7 @@ class EditNoteFragment : BaseFragmentWithBinding<FragmentEditNoteBinding>() {
                     mainActivity.onPrepareOptionsMenu(menu).apply {
                         mainActivity.invalidateOptionsMenu()
                     }
-
+                    viewModel.setTitleLength(text?.trim()?.length ?: 0)
                 }
             } else {
                 showCheckContainer = false
@@ -140,7 +141,6 @@ class EditNoteFragment : BaseFragmentWithBinding<FragmentEditNoteBinding>() {
                 setMenu(TypeMenu.TYPE_DEFAULT)
                 showCheckTitle = false
             }
-            binding?.cardView2?.visibility = View.GONE
         }
         binding?.container?.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
@@ -148,11 +148,11 @@ class EditNoteFragment : BaseFragmentWithBinding<FragmentEditNoteBinding>() {
                     showCheckContainer = true
                 }
                 setMenu(TypeMenu.TYPE_CONTAINER)
-                binding?.cardView2?.visibility = View.VISIBLE
+
             } else {
                 showCheckContainer = false
                 setMenu(TypeMenu.TYPE_CONTAINER)
-                binding?.cardView2?.visibility = View.GONE
+
             }
         }
     }
@@ -165,7 +165,7 @@ class EditNoteFragment : BaseFragmentWithBinding<FragmentEditNoteBinding>() {
                 showCheckTitle = true
             }
             setMenu(TypeMenu.TYPE_CONTAINER)
-            binding?.cardView2?.visibility = View.VISIBLE
+
         }
         binding?.clear?.setOnClickListener {
 
@@ -200,7 +200,7 @@ class EditNoteFragment : BaseFragmentWithBinding<FragmentEditNoteBinding>() {
                     showCheckTitle = false
                     showCheckContainer = false
                     setMenu(TypeMenu.TYPE_DEFAULT)
-                    binding?.cardView2?.visibility = View.GONE
+//                    binding?.cardView2?.visibility = View.GONE
                 }
             }
         })
@@ -220,186 +220,175 @@ class EditNoteFragment : BaseFragmentWithBinding<FragmentEditNoteBinding>() {
                 mainActivity.onBackPressed()
                 false
             }
-
             R.id.checked -> {
                 if (typeMenu == TypeMenu.TYPE_TITLE || typeMenu == TypeMenu.TYPE_CONTAINER) {
                     if (note != null) {
-                        val noteData: List<Note> = viewModel.listNote.value?.filter {
-                            it.title == note?.title && it.container == note?.container && it.time == note?.time
-                        } ?: listOf()
-                        val note = noteData?.getOrNull(0)?.id?.let {
-                            Note(
-                                id = it,
-                                title = ((binding?.title?.text ?: "").toString()),
-                                container = (binding?.container?.text ?: "").toString(),
-                                time = (binding?.time?.text ?: "").toString(),
-                                type = noteType,
-                                timeSet = if (binding?.viewRemind?.isVisible == true) calendar.time.time.toString() else ""
-                            )
-                        }
-                        note?.let {
-                            this.note = note
-                            viewModel.update(it)
-                        }
-                    } else {
-                        val note = Note(
-                            title = ((binding?.title?.text ?: "").toString()),
-                            container = (binding?.container?.text ?: "").toString(),
-                            time = (binding?.time?.text ?: "").toString(),
-                            type = noteType,
-                            timeSet = if (binding?.viewRemind?.isVisible == true) calendar.time.time.toString() else ""
-                        )
-                        this.note = note
-                        viewModel.add(note!!)
+                            note?.let {
+                                it.title = ((binding?.title?.text ?: "").toString())
+                                it.container = (binding?.container?.text ?: "").toString()
+                                it.time = (binding?.time?.text ?: "").toString()
+                                it.type = noteType
+                                it.timeSet =
+                                    if (binding?.viewRemind?.isVisible == true) calendar.time.time.toString() else ""
+                                viewModel.update(it)
                     }
-                }
-                true
-            }
-
-            R.id.more -> {
-                showBottomSheetDialog()
-                true
-            }
-
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    fun showBottomSheetDialog() {
-        val binding =
-            FragmentBottomSheetDialogBinding.inflate(
-                LayoutInflater.from(requireContext()),
-                null,
-                false
-            )
-        val dialogbottomshet = BottomSheetDialog(requireContext())
-        dialogbottomshet.setContentView(binding.root)
-        binding.viewRemind.click {
-            val dialog = AlertDialog.Builder(requireContext())
-
-            dialog.setMessage("Bạn có muốn đặt nhắc nhở không ?")
-                .setTitle("Đặt nhắc nhở ?")
-            dialog.setPositiveButton("Oke") { dialog, which ->
-                MainApp.newInstance()?.preference?.apply {
-                    if (getValueCoin() > 1) {
-                        setValueCoin(getValueCoin() - 1)
-                        openDatePicker()
-                        Toast.makeText(
-                            requireContext(),
-                            "Đã thêm  thành công và trù 1 vàng",
-                            Toast.LENGTH_SHORT
-
-                        ).show()
-                    } else startActivity(
-                        Intent(
-                            requireContext(),
-                            PurchaseInAppActivity::class.java
-                        )
+                } else {
+                    val note = Note(
+                        title = ((binding?.title?.text ?: "").toString()),
+                        container = (binding?.container?.text ?: "").toString(),
+                        time = (binding?.time?.text ?: "").toString(),
+                        type = noteType,
+                        timeSet = if (binding?.viewRemind?.isVisible == true) calendar.time.time.toString() else ""
                     )
+                    this.note = note
+                    viewModel.add(note!!)
                 }
-
             }
-            dialog.setNegativeButton("Cancel") { dialog, which ->
-                dialog.dismiss()
-            }.create()
-            dialog.show()
-        }
-        dialogbottomshet.show()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_edit, menu)
-        this.menu = menu
-        when (typeMenu) {
-            TypeMenu.TYPE_DEFAULT -> {
-                setHideMenu(0, 1, 2, menu = menu)
-                setShowMenu(3, menu = menu)
-            }
-
-            TypeMenu.TYPE_TITLE -> {
-                setHideMenu(0, 1, 2, menu = menu)
-                setShowMenu(3, menu = menu)
-            }
-
-            TypeMenu.TYPE_CONTAINER -> {
-                setHideMenu(2, menu = menu)
-                setShowMenu(0, 1, 3, menu = menu)
-            }
-
-            else -> {
-                setHideMenu(0, 1, 2, menu = menu)
-                setShowMenu(3, menu = menu)
-            }
-        }
-        if (showCheckTitle) setShowMenu(2, menu = menu)
-        if (showCheckContainer) setShowMenu(2, menu = menu)
-
-        return super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    private fun setHideMenu(vararg id: Int, menu: Menu?) {
-        id.forEach {
-            menu?.get(it)?.isVisible = false
-        }
-    }
-
-    private fun setShowMenu(vararg id: Int, menu: Menu?) {
-        id.forEach {
-            menu?.get(it)?.isVisible = true
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun openDatePicker() {
-        datePickerDialog = DatePickerDialog(
-            requireContext(),
-            { view, year, month, dayOfMonth ->
-                calendar.set(Calendar.YEAR, year)
-                calendar.set(Calendar.MONTH, month)
-                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                openTimePicker()
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-        datePickerDialog?.setTitle("")
-        datePickerDialog?.show()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun openTimePicker() {
-        TimePickerDialog(
-            requireContext(),
-            { view, hourOfDay, minute ->
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                calendar.set(Calendar.MINUTE, minute)
-                val alarmManager =
-                    requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                val intent = Intent(requireActivity(), AlarmReceiver::class.java)
-                intent.action = "FOO_ACTION"
-                val pendingIntent = PendingIntent.getBroadcast(
-                    requireContext(),
-                    0,
-                    intent,
-                    PendingIntent.FLAG_IMMUTABLE
-                )
-                val alarmTimeAtUTC = calendar.timeInMillis
-                alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeAtUTC, pendingIntent)
-                binding?.viewRemind?.visibility = View.VISIBLE
-            },
-            calendar.get(Calendar.HOUR_OF_DAY),
-            calendar.get(Calendar.MINUTE),
             true
-        ).apply {
-            setTitle("")
-            show()
+        }
+
+        R.id.more -> {
+            showBottomSheetDialog()
+            true
+        }
+
+        else -> super.onOptionsItemSelected(item)
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.M)
+fun showBottomSheetDialog() {
+    val binding =
+        FragmentBottomSheetDialogBinding.inflate(
+            LayoutInflater.from(requireContext()),
+            null,
+            false
+        )
+    val dialogbottomshet = BottomSheetDialog(requireContext())
+    dialogbottomshet.setContentView(binding.root)
+    binding.viewRemind.click {
+        val dialog = AlertDialog.Builder(requireContext())
+        dialog.setMessage("Bạn có muốn đặt nhắc nhở không ?")
+            .setTitle("Đặt nhắc nhở ?")
+        dialog.setPositiveButton("Oke") { dialog, which ->
+            MainApp.newInstance()?.preference?.apply {
+                if (getValueCoin() > 0) {
+                    setValueCoin(getValueCoin() - 1)
+                    openDatePicker()
+                    Toast.makeText(
+                        requireContext(),
+                        "Đã thêm  thành công và trù 1 vàng",
+                        Toast.LENGTH_SHORT
+
+                    ).show()
+                } else startActivity(
+                    Intent(
+                        requireContext(),
+                        PurchaseInAppActivity::class.java
+                    )
+                )
+            }
+
+        }
+        dialog.setNegativeButton("Cancel") { dialog, which ->
+            dialog.dismiss()
+        }.create()
+        dialog.show()
+    }
+    dialogbottomshet.show()
+}
+
+override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    inflater.inflate(R.menu.menu_edit, menu)
+    this.menu = menu
+    when (typeMenu) {
+        TypeMenu.TYPE_DEFAULT -> {
+            setHideMenu(0, menu = menu)
+            setShowMenu(1, menu = menu)
+        }
+
+        TypeMenu.TYPE_TITLE -> {
+            setHideMenu(0, menu = menu)
+            setShowMenu(1, menu = menu)
+        }
+
+        TypeMenu.TYPE_CONTAINER -> {
+            setShowMenu(0, 1, menu = menu)
+        }
+
+        else -> {
+            setHideMenu(0, menu = menu)
+            setShowMenu(1, menu = menu)
         }
     }
+    if (showCheckTitle) setShowMenu(0, menu = menu)
+    if (showCheckContainer) setShowMenu(0, menu = menu)
 
+    return super.onCreateOptionsMenu(menu, inflater)
+}
 
-    enum class TypeMenu {
-        TYPE_DEFAULT, TYPE_TITLE, TYPE_CONTAINER
+private fun setHideMenu(vararg id: Int, menu: Menu?) {
+    id.forEach {
+        menu?.get(it)?.isVisible = false
     }
+}
+
+private fun setShowMenu(vararg id: Int, menu: Menu?) {
+    id.forEach {
+        menu?.get(it)?.isVisible = true
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.M)
+private fun openDatePicker() {
+    datePickerDialog = DatePickerDialog(
+        requireContext(),
+        { view, year, month, dayOfMonth ->
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month)
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            openTimePicker()
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
+    )
+    datePickerDialog?.setTitle("")
+    datePickerDialog?.show()
+}
+
+@RequiresApi(Build.VERSION_CODES.M)
+private fun openTimePicker() {
+    TimePickerDialog(
+        requireContext(),
+        { view, hourOfDay, minute ->
+            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+            calendar.set(Calendar.MINUTE, minute)
+            val alarmManager =
+                requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val intent = Intent(requireActivity(), AlarmReceiver::class.java)
+            intent.action = "FOO_ACTION"
+            val pendingIntent = PendingIntent.getBroadcast(
+                requireContext(),
+                0,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE
+            )
+            val alarmTimeAtUTC = calendar.timeInMillis
+            alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeAtUTC, pendingIntent)
+            binding?.viewRemind?.visibility = View.VISIBLE
+        },
+        calendar.get(Calendar.HOUR_OF_DAY),
+        calendar.get(Calendar.MINUTE),
+        true
+    ).apply {
+        setTitle("")
+        show()
+    }
+}
+
+
+enum class TypeMenu {
+    TYPE_DEFAULT, TYPE_TITLE, TYPE_CONTAINER
+}
 }

@@ -3,16 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:ignore="MissingDefaultResource">
-    <item
-        android:id="@+id/left"
-        android:title=""
-        android:icon="@drawable/corner_up_left"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/right"
-        android:title=""
-        android:icon="@drawable/corner_up_right"
-        app:showAsAction="always" />
+
     <item
         android:id="@+id/checked"
         android:title=""

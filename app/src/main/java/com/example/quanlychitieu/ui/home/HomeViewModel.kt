@@ -98,7 +98,7 @@ class HomeViewModel(context: Context) : ViewModel() {
                 listTotalMoney.add(getMillionVND(total.toDouble()))
             }.await()
             if (listTotalMoney[0] - listTotalMoney[1] > 0) {
-                listTotalMoney.add(listTotalMoney[0] - listTotalMoney[1])
+                listTotalMoney.add(getNumber(listTotalMoney[0] - listTotalMoney[1]))
             } else listTotalMoney.add(getMillionVND(0.0))
             when (getComparisonMoneyCollectAndSpending(listTotalMoney)) {
                 1 -> {
@@ -127,7 +127,7 @@ class HomeViewModel(context: Context) : ViewModel() {
                         Triple(
                             "Tiết kiệm",
                             getTotalRevenueVersusExpenditure(
-                                listTotalMoney.get(1),
+                                listTotalMoney.get(2),
                                 listTotalMoney.get(0)
                             ).toFloat(),
                             Color.RED
@@ -170,23 +170,23 @@ class HomeViewModel(context: Context) : ViewModel() {
                 }
 
                 -1 -> {
-                    if (listTotalMoney.get(0) > 0)
+                    if (listTotalMoney[0] > 0)
                         list.add(
                             Triple(
                                 "Tổng Thu",
-                                100f, Color.BLUE
+                                getTotalRevenueVersusExpenditure(
+                                    listTotalMoney[0],
+                                    listTotalMoney[1]
+                                ).toFloat(), Color.BLUE
                             )
                         )
                     else
                         list.add(Triple("Tổng Thu", 1f, Color.BLUE))
-                    if (listTotalMoney.get(1) > 0)
+                    if (listTotalMoney[1] > 0)
                         list.add(
                             Triple(
                                 "Tổng Chi",
-                                getTotalRevenueVersusExpenditure(
-                                    listTotalMoney.get(1),
-                                    listTotalMoney.get(0)
-                                ).toFloat(),
+                                100f,
                                 Color.GREEN
                             )
                         )
@@ -197,16 +197,26 @@ class HomeViewModel(context: Context) : ViewModel() {
                             Color.GREEN
                         )
                     )
-                    list.add(
-                        Triple(
-                            "Tiết kiệm",
-                            getTotalRevenueVersusExpenditure(
-                                listTotalMoney.get(1),
-                                listTotalMoney.get(2)
-                            ).toFloat(),
-                            Color.RED
+                    if (listTotalMoney.get(2) > 0) {
+                        list.add(
+                            Triple(
+                                "Tiết kiệm",
+                                getTotalRevenueVersusExpenditure(
+                                    listTotalMoney.get(2),
+                                    listTotalMoney.get(1)
+                                ).toFloat(),
+                                Color.RED
+                            )
                         )
-                    )
+                    } else {
+                        list.add(
+                            Triple(
+                                "Tiết kiệm",
+                                1f,
+                                Color.RED
+                            )
+                        )
+                    }
                     _listColum.postValue(Pair(list, listTotalMoney))
                 }
             }
@@ -226,14 +236,22 @@ class HomeViewModel(context: Context) : ViewModel() {
 
 
     fun getMillionVND(money: Double): Double {
+
         val valueInMillions = if (money?.toDouble() == null) 0.0 else money.toDouble() / 1000000
         val formattedNumber = String.format("%.2f", valueInMillions)
-        val integerPart = formattedNumber.substringBefore(".")
-        val decimalPart = formattedNumber.substringAfter(".")
+        val integerPart = formattedNumber.substringBefore(",")
+        val decimalPart = formattedNumber.substringAfter(",")
         val newNumber = (integerPart.toIntOrNull() ?: 0).toString() + "." + decimalPart
         return newNumber.toDoubleOrNull() ?: 0.0
     }
 
+    fun getNumber(money: Double): Double {
+        val formattedNumber = String.format("%.2f", money)
+        val integerPart = formattedNumber.substringBefore(",")
+        val decimalPart = formattedNumber.substringAfter(",")
+        val newNumber = (integerPart.toIntOrNull() ?: 0).toString() + "." + decimalPart
+        return newNumber.toDoubleOrNull() ?: 0.0
+    }
 }
 
 class HomeViewModelFactory(private val context: Context) : ViewModelProvider.Factory {

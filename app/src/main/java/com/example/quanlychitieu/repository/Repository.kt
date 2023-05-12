@@ -19,7 +19,7 @@ class Repository(context: Context) {
     suspend fun setCollect(collect: Collect) = databaseLocal.getCollectDao().insertAll(collect)
     suspend fun addNote(note: Note) = databaseLocal.getNoteDao().addNote(note)
     suspend fun delete(note: Note) = databaseLocal.getNoteDao().delete(note)
-    suspend fun updateNote(note: Note) = databaseLocal.getNoteDao().Update(note)
+    suspend fun updateNote(note: Note) = databaseLocal.getNoteDao().update(note)
     suspend fun addNoteType(noteType: NoteType) = databaseLocal.getNoteTypeDao().addNoteType(noteType)
     suspend fun updateNoteType(noteType: NoteType) = databaseLocal.getNoteTypeDao().updateNoteType(noteType)
     suspend fun deleteNoteType(noteType: NoteType) = databaseLocal.getNoteTypeDao().deleteNoteType(noteType)

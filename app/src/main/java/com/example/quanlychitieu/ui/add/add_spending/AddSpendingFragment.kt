@@ -64,6 +64,7 @@ class AddSpendingFragment : BaseFragmentWithBinding<FragmentAddSpendingBinding>(
                     viewModel.setSpending(spending)
                     val money = Money(money = this.money.minus(binding.money.getMoney()))
                     viewModel.setMoney(money) {
+                        Toast.makeText(context, "Đã thêm giao dịch thành công", Toast.LENGTH_LONG).show()
                         mainActivity.homeFragment.onBackNavigation?.invoke()
                     }
 

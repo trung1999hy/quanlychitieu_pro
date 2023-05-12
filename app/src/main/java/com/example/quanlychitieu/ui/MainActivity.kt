@@ -37,10 +37,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount > 1) {
+        if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.let {
-                val fragment = it.fragments.get(it.fragments.size - 2) as BaseFragment
+                val fragment = it.fragments[it.fragments.size - 2] as BaseFragment
                 fragment.onBackNavigation?.invoke()
+                if (fragment is MainFragment){
+                    noteTypeFragment.getCoin()
+                }
             }
         }
         super.onBackPressed()

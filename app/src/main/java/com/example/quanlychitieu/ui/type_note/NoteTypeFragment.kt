@@ -1,6 +1,7 @@
 package com.example.quanlychitieu.ui.type_note
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
@@ -9,6 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.example.quanlychitieu.base.BaseFragmentWithBinding
 import com.example.quanlychitieu.model.NoteType
+import com.example.quanlychitieu.ui.MainApp
+import com.example.quanlychitieu.ui.inapp.PurchaseInAppActivity
 import com.example.quanlychitieu.ui.type_note.note.NoteFragment
 import com.example.quanlychitieu.utils.click
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -39,6 +42,7 @@ class NoteTypeFragment : BaseFragmentWithBinding<FragmentNoteTypeBinding>() {
 
 
     override fun init() {
+        getCoin()
         adapter = NoteTypeAdapter({
             showBottomSheetDialog(it)
         }, {
@@ -72,6 +76,13 @@ class NoteTypeFragment : BaseFragmentWithBinding<FragmentNoteTypeBinding>() {
 
     override fun initAction() {
         setMenuClick()
+        openInApp()
+    }
+
+    private fun openInApp() {
+        binding.coin.click {
+            startActivity(Intent(requireActivity(), PurchaseInAppActivity::class.java))
+        }
     }
 
     private fun showBottomSheetNewFolderDialog() {
@@ -100,7 +111,7 @@ class NoteTypeFragment : BaseFragmentWithBinding<FragmentNoteTypeBinding>() {
         dialog.show()
     }
 
-    fun showBottomSheetDialog(noteType: NoteType) {
+    private fun showBottomSheetDialog(noteType: NoteType) {
         val binding = DialogMoreItemClickBinding.inflate(
             LayoutInflater.from(requireContext()),
             null,
@@ -127,7 +138,6 @@ class NoteTypeFragment : BaseFragmentWithBinding<FragmentNoteTypeBinding>() {
         binding.cancel.click {
             dialog.dismiss()
         }
-
         dialog.setContentView(binding.root)
         dialog.show()
     }
@@ -153,9 +163,12 @@ class NoteTypeFragment : BaseFragmentWithBinding<FragmentNoteTypeBinding>() {
                     showBottomSheetNewFolderDialog()
                     true
                 }
-
                 else -> false
             }
         }
+    }
+
+    fun getCoin() {
+        binding.coin.text = MainApp.newInstance()?.preference?.getValueCoin().toString()
     }
 }

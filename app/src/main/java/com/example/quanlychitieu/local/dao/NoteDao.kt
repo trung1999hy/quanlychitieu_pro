@@ -9,7 +9,7 @@ import com.example.quanlychitieu.model.Note
 @Dao
 interface NoteDao {
     @Update
-    suspend fun Update(note: Note)
+    suspend fun update(note: Note)
 
     @Insert
     suspend fun addNote(note: Note)

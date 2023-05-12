@@ -25,6 +25,7 @@ class HistoryRevenueExpenditureFragment :
 
 
     override fun init() {
+        setToolbar(binding.toolbar)
         binding.viewPager.adapter = HistoryRevenueExpenditureAdapter(
             childFragmentManager,
             FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT

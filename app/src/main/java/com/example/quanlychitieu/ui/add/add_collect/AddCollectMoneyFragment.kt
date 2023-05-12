@@ -63,6 +63,7 @@ class AddCollectMoneyFragment : BaseFragmentWithBinding<FragmentAddCollectMoneyB
                     viewModel.setCollect(collect)
                     val money = Money(money = this.money + binding.money.getMoney())
                     viewModel.setMoney(money) {
+                        Toast.makeText(context, "Đã thêm giao dịch thành công", Toast.LENGTH_LONG).show()
                         mainActivity.homeFragment.onBackNavigation?.invoke()
                     }
 

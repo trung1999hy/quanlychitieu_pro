@@ -47,22 +47,18 @@ class NoteFragment : BaseFragmentWithBinding<FragmentNoteBinding>() {
         }
 
     override fun init() {
+        setToolbar(binding.toolbarMain){
+            mainActivity.noteTypeFragment.getCoin()
+        }
+
         viewModel.getAllNote()
         binding?.recylerview?.adapter = noteAdapter
         binding?.recylerview?.setHasFixedSize(true)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                mainActivity.onBackPressed()
-                false
-            }
 
-            else -> super.onOptionsItemSelected(item)
-        }
 
-    }
+
 
     override fun initAction() {
         binding?.fab?.setOnClickListener {

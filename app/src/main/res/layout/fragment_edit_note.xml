@@ -22,7 +22,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:paddingHorizontal="@dimen/_12dp"
-        app:layout_constraintBottom_toTopOf="@id/cardView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
@@ -33,7 +32,7 @@
             android:isScrollContainer="true"
             android:orientation="vertical">
 
-            <com.example.quanlychitieu.custom.CustomEditText
+            <EditText
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -108,7 +107,7 @@
                     android:src="@drawable/x"/>
             </LinearLayout>
 
-            <com.example.quanlychitieu.custom.CustomEditText
+            <EditText
                 android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -134,19 +133,19 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/cardView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+<!--    <com.google.android.material.appbar.AppBarLayout-->
+<!--        android:id="@+id/cardView2"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="@color/white"-->
+<!--        android:visibility="gone"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent">-->
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/check"/>
-    </com.google.android.material.appbar.AppBarLayout>
+<!--        <ImageView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/check"/>-->
+<!--    </com.google.android.material.appbar.AppBarLayout>-->
 </androidx.constraintlayout.widget.ConstraintLayout>

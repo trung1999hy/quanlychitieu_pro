@@ -38,9 +38,10 @@ abstract class BaseFragment : Fragment() {
     }
 
 
-    open fun setToolbar(view: MaterialToolbar) {
+    open fun setToolbar(view: MaterialToolbar, onclick: (() -> Unit)? = null) {
         view.setNavigationOnClickListener {
             mainActivity.onBackPressed()
+            onclick?.invoke()
         }
     }
 
