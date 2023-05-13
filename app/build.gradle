@@ -11,7 +11,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.quanlychitieu"
+        applicationId "com.ttv.quanlychitieu"
         minSdk 24
         targetSdk 33
         versionCode 1
