@@ -10,11 +10,6 @@ class MainApp : Application() {
         super.onCreate()
         instance = this
         preference = Preference.buildInstance(this)
-        if (preference?.firstInstall == false) {
-            preference?.firstInstall = true
-            preference?.setValueCoin(100)
-        }
-
     }
 
     companion object {
