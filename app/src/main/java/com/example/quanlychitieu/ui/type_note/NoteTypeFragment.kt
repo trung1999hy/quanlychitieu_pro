@@ -4,15 +4,19 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.example.quanlychitieu.base.BaseFragmentWithBinding
 import com.example.quanlychitieu.model.NoteType
+import com.example.quanlychitieu.model.User
 import com.example.quanlychitieu.ui.MainApp
 import com.example.quanlychitieu.ui.inapp.PurchaseInAppActivity
+import com.example.quanlychitieu.ui.type_note.archive.ArchiveFragment
 import com.example.quanlychitieu.ui.type_note.note.NoteFragment
+import com.example.quanlychitieu.utils.DataController
 import com.example.quanlychitieu.utils.click
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.thn.quanlychitieu.R
@@ -31,7 +35,6 @@ class NoteTypeFragment : BaseFragmentWithBinding<FragmentNoteTypeBinding>() {
 
     private lateinit var adapter: NoteTypeAdapter
 
-
     override fun getViewBinding(inflater: LayoutInflater): FragmentNoteTypeBinding {
         viewModel = ViewModelProvider(
             this,
@@ -42,7 +45,7 @@ class NoteTypeFragment : BaseFragmentWithBinding<FragmentNoteTypeBinding>() {
 
 
     override fun init() {
-        getCoin()
+        getData()
         adapter = NoteTypeAdapter({
             showBottomSheetDialog(it)
         }, {
@@ -75,6 +78,9 @@ class NoteTypeFragment : BaseFragmentWithBinding<FragmentNoteTypeBinding>() {
     }
 
     override fun initAction() {
+        binding.addFolder.click {
+            showBottomSheetNewFolderDialog()
+        }
         setMenuClick()
         openInApp()
     }
@@ -103,9 +109,6 @@ class NoteTypeFragment : BaseFragmentWithBinding<FragmentNoteTypeBinding>() {
                 dialog.dismiss()
             }
 
-        }
-        binding.cancel.click {
-            dialog.dismiss()
         }
         dialog.setContentView(binding.root)
         dialog.show()
@@ -159,8 +162,11 @@ class NoteTypeFragment : BaseFragmentWithBinding<FragmentNoteTypeBinding>() {
     private fun setMenuClick() {
         binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.addFolder -> {
-                    showBottomSheetNewFolderDialog()
+                R.id.archive -> {
+                    mainActivity.addFragment(
+                        this.requireParentFragment(),
+                      ArchiveFragment.newInstance()
+                    )
                     true
                 }
                 else -> false
@@ -168,7 +174,33 @@ class NoteTypeFragment : BaseFragmentWithBinding<FragmentNoteTypeBinding>() {
         }
     }
 
-    fun getCoin() {
-        binding.coin.text = MainApp.newInstance()?.preference?.getValueCoin().toString()
+
+    private fun setDataBaseGold(){
+        val dataController = DataController(MainApp.newInstance()?.deviceId?:"")
+        dataController.writeNewUser(MainApp.newInstance()?.deviceId?:"",  100)
     }
+
+     fun getData(){
+        val dataController = DataController(MainApp.newInstance()?.deviceId?:"")
+        dataController.setOnListenerFirebase(object : DataController.OnListenerFirebase {
+            override fun onCompleteGetUser(user: User?) {
+                user?.let {
+                    MainApp.newInstance()?.preference?.setValueCoin(user.coin)
+                    binding.coin.text = String.format(resources.getString(R.string.amount_gold), MainApp.newInstance()?.preference?.getValueCoin()  )
+                } ?: kotlin.run {
+                    setDataBaseGold()
+                }
+            }
+
+            override fun onSuccess() {
+
+            }
+
+            override fun onFailure() {
+                Toast.makeText(this@NoteTypeFragment.requireContext(), "Có lỗi kết nối đến server!", Toast.LENGTH_LONG).show()
+            }
+        })
+        dataController.user
+    }
+
 }

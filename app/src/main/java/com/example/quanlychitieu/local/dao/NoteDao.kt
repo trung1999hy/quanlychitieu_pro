@@ -1,5 +1,6 @@
 package com.example.quanlychitieu.local.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -18,5 +19,5 @@ interface NoteDao {
     suspend fun delete(note: Note)
 
     @Query("SELECT * FROM note")
-    fun getAll(): List<Note>
+    fun getAll(): LiveData<List<Note>>
 }

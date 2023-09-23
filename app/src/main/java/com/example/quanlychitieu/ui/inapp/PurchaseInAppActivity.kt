@@ -13,7 +13,10 @@ import com.android.billingclient.api.*
 import com.android.billingclient.api.BillingClient.ProductType
 import com.android.billingclient.api.BillingFlowParams.ProductDetailsParams
 import com.android.billingclient.api.QueryProductDetailsParams.Product
+import com.example.quanlychitieu.model.User
+import com.example.quanlychitieu.ui.MainApp
 import com.example.quanlychitieu.utils.Constants
+import com.example.quanlychitieu.utils.DataController
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.collect.ImmutableList
 import com.thn.quanlychitieu.R
 
@@ -200,10 +203,32 @@ class PurchaseInAppActivity : AppCompatActivity(), PurchaseInAppAdapter.OnClickL
 
     private fun setupResult(proId: String, quantity: Int) {
         val intent = Intent()
-        //        int totalCoin = MainApp.newInstance().getPreference().getValueCoin();
-//        int remainCoin = totalCoin + getCoinFromKey(proId) * quantity;
-//        MainApp.newInstance().getPreference().setValueCoin(remainCoin);
-//        intent.putExtra(Constants.COIN_ORDER_RESULT, remainCoin + "");
+        val totalCoin = MainApp.newInstance()?.preference?.getValueCoin() ?: 0
+        val remainCoin = totalCoin + getCoinFromKey(proId) * quantity;
+        MainApp.newInstance()?.preference?.setValueCoin(remainCoin);
+
+        val dataController = DataController(MainApp.newInstance()?.deviceId ?: "")
+        dataController.setOnListenerFirebase(object : DataController.OnListenerFirebase {
+            override fun onCompleteGetUser(user: User?) {
+            }
+
+            override fun onSuccess() {
+                Toast.makeText(
+                    this@PurchaseInAppActivity,
+                    "Xin chúc mừng, bạn đã mua gold thành công!",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+            override fun onFailure() {
+                Toast.makeText(
+                    this@PurchaseInAppActivity,
+                    "Có lỗi kết nối đến server!",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        })
+        dataController.updateDocument(totalCoin)
         setResult(RESULT_OK, intent)
         runOnUiThread { onBackPressed() }
     }

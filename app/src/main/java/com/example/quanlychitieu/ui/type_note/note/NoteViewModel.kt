@@ -34,11 +34,7 @@ class NoteViewModel(context: Context) : ViewModel() {
         }
     }
 
-    fun getAllNote(){
-        viewModelScope.launch {
-            _listNote.postValue(repository.getAllNote() )
-        }
-    }
+    fun getAllNote() = repository.getAllNote()
 
     class MainViewModelFactory(private val app: Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {

@@ -1,6 +1,7 @@
 package com.example.quanlychitieu.ui
 
 import android.app.Application
+import android.provider.Settings
 import com.example.quanlychitieu.local.Preference
 
 class MainApp : Application() {
@@ -11,7 +12,7 @@ class MainApp : Application() {
         preference = Preference.buildInstance(this)
         if (preference?.firstInstall == false) {
             preference?.firstInstall = true
-            preference?.setValueCoin(10)
+            preference?.setValueCoin(100)
         }
 
     }
@@ -26,4 +27,6 @@ class MainApp : Application() {
             return instance
         }
     }
+    val deviceId: String
+        get() = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
 }

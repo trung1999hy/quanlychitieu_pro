@@ -10,10 +10,14 @@ import com.example.quanlychitieu.model.Spending
 @Dao
 interface SpendingDao {
     @Query("SELECT * FROM spending")
-    fun getAll():List<Spending>
+    fun getAll(): List<Spending>
+
+    @Query("SELECT * FROM spending")
+    fun getAllLiveData(): LiveData<List<Spending>>
+
     @Insert
     suspend fun insertAll(vararg users: Spending)
 
     @Delete
-    suspend  fun delete(user: Spending)
+    suspend fun delete(user: Spending)
 }

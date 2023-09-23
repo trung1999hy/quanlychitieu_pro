@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "476037368196",
+    "project_id": "quanlychitieu-d4371",
+    "storage_bucket": "quanlychitieu-d4371.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:476037368196:android:fa9e5e184f092c6590b5d1",
+        "android_client_info": {
+          "package_name": "com.ttv.quanlychitieu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxmBooEaZHF5p_fynjGl-R2JMRtbSjb9M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

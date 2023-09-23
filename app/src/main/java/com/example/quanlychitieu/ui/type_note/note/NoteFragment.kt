@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.quanlychitieu.base.BaseFragmentWithBinding
 import com.example.quanlychitieu.model.Note
 import com.example.quanlychitieu.ui.type_note.edit_note.EditNoteFragment
@@ -48,17 +50,12 @@ class NoteFragment : BaseFragmentWithBinding<FragmentNoteBinding>() {
 
     override fun init() {
         setToolbar(binding.toolbarMain){
-            mainActivity.noteTypeFragment.getCoin()
+            mainActivity.noteTypeFragment.getData()
         }
-
-        viewModel.getAllNote()
         binding?.recylerview?.adapter = noteAdapter
+        binding?.recylerview?.layoutManager = StaggeredGridLayoutManager(2,RecyclerView.VERTICAL)
         binding?.recylerview?.setHasFixedSize(true)
     }
-
-
-
-
 
     override fun initAction() {
         binding?.fab?.setOnClickListener {
@@ -68,13 +65,12 @@ class NoteFragment : BaseFragmentWithBinding<FragmentNoteBinding>() {
 
 
     override fun initData() {
-        viewModel.listNote.observe(this) {
+        viewModel.getAllNote().observe(this) {
             if (it.isNotEmpty()) {
                 var listData: ArrayList<Note> = arrayListOf()
                 it.reversed().forEach {
                     listData.add(it)
                 }
-
                 noteAdapter.setAdapter(listData.filter { it.type == noteType } as ArrayList<Note>)
             } else
                 noteAdapter.setAdapter(arrayListOf())

@@ -17,12 +17,11 @@
             app:layout_scrollFlags="scroll|enterAlways"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            app:titleCentered="true"
             app:navigationIcon="@drawable/ic_back"
             android:backgroundTint="@color/green01"
             app:titleTextColor="@color/white"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:title="Note" />
+            app:title="Lưu Trữ" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

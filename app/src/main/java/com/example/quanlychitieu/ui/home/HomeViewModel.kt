@@ -14,6 +14,7 @@ import com.example.quanlychitieu.repository.Repository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 class HomeViewModel(context: Context) : ViewModel() {
     private val repository: Repository = Repository(context)
@@ -64,6 +65,8 @@ class HomeViewModel(context: Context) : ViewModel() {
 
     }
 
+    fun getListSpendingLiveData() = repository.getListSpendingLiveData()
+
 
     fun getLisCollect() {
         viewModelScope.launch {
@@ -79,9 +82,12 @@ class HomeViewModel(context: Context) : ViewModel() {
 
     }
 
+    fun getListLiveData() = repository.getListCollectLivedata()
+
     fun getTotalExpenditure() {
         viewModelScope.launch {
             var list: ArrayList<Triple<String, Float, Int>> = arrayListOf()
+            var list2: ArrayList<Float> = arrayListOf()
             val listTotalMoney: ArrayList<Double> = arrayListOf()
             async {
                 var total = 0
@@ -97,16 +103,24 @@ class HomeViewModel(context: Context) : ViewModel() {
                 }
                 listTotalMoney.add(getMillionVND(total.toDouble()))
             }.await()
-            if (listTotalMoney[0] - listTotalMoney[1] > 0) {
-                listTotalMoney.add(getNumber(listTotalMoney[0] - listTotalMoney[1]))
-            } else listTotalMoney.add(getMillionVND(0.0))
+                listTotalMoney.add(listTotalMoney[0] - listTotalMoney[1])
+                _money.postValue(Money(money = ((listTotalMoney[0] - listTotalMoney[1]) * 1000000.0).toInt()))
             when (getComparisonMoneyCollectAndSpending(listTotalMoney)) {
                 1 -> {
-                    if (listTotalMoney.get(0) > 0)
+                    if (listTotalMoney[0] > 0) {
                         list.add(Triple("Tổng Thu", 100f, Color.BLUE))
-                    else
+                        list2.add(100f)
+                    } else {
+                        list2.add(1f)
                         list.add(Triple("Tổng Thu", 1f, Color.BLUE))
-                    if (listTotalMoney.get(1) > 0)
+                    }
+                    if (listTotalMoney[1] > 0) {
+                        list2.add(
+                            getTotalRevenueVersusExpenditure(
+                                listTotalMoney[1],
+                                listTotalMoney[2]
+                            ).toFloat()
+                        )
                         list.add(
                             Triple(
                                 "Tổng Chi", getTotalRevenueVersusExpenditure(
@@ -116,32 +130,45 @@ class HomeViewModel(context: Context) : ViewModel() {
                                 Color.GREEN
                             )
                         )
-                    else list.add(
-                        Triple(
-                            "Tổng Chi",
-                            1f,
-                            Color.GREEN
+                    } else {
+                        list2.add(1f)
+                        list.add(
+                            Triple(
+                                "Tổng Chi",
+                                1f,
+                                Color.GREEN
+                            )
                         )
-                    )
+                    }
                     list.add(
                         Triple(
                             "Tiết kiệm",
                             getTotalRevenueVersusExpenditure(
-                                listTotalMoney.get(2),
+                                listTotalMoney.get(1),
                                 listTotalMoney.get(0)
                             ).toFloat(),
-                            Color.RED
+                            Color.LTGRAY
                         )
                     )
+                    list2.add(
+                        getTotalRevenueVersusExpenditure(
+                            listTotalMoney.get(1),
+                            listTotalMoney.get(0)
+                        ).toFloat()
+                    )
+
                     _listColum.postValue(Pair(list, listTotalMoney))
                 }
 
                 0 -> {
-                    if (listTotalMoney.get(0) > 0)
+                    if (listTotalMoney.get(0) > 0) {
                         list.add(Triple("Tổng Thu", 100f, Color.BLUE))
-                    else
+                        list2.add(100f)
+                    } else {
                         list.add(Triple("Tổng Thu", 1f, Color.BLUE))
-                    if (listTotalMoney.get(1) > 0)
+                        list2.add(1f)
+                    }
+                    if (listTotalMoney.get(1) > 0) {
                         list.add(
                             Triple(
                                 "Tổng Chi",
@@ -149,13 +176,17 @@ class HomeViewModel(context: Context) : ViewModel() {
                                 Color.GREEN
                             )
                         )
-                    else list.add(
-                        Triple(
-                            "Tổng Chi",
-                            1f,
-                            Color.GREEN
+                        list2.add(100f)
+                    } else {
+                        list.add(
+                            Triple(
+                                "Tổng Chi",
+                                1f,
+                                Color.GREEN
+                            )
                         )
-                    )
+                        list2.add(1f)
+                    }
                     list.add(
                         Triple(
                             "Tiết kiệm",
@@ -163,26 +194,41 @@ class HomeViewModel(context: Context) : ViewModel() {
                                 listTotalMoney.get(0),
                                 listTotalMoney.get(2)
                             ).toFloat(),
-                            Color.RED
+                            Color.LTGRAY
                         )
                     )
+                    list2.add(
+                        getTotalRevenueVersusExpenditure(
+                            listTotalMoney.get(0),
+                            listTotalMoney.get(2)
+                        ).toFloat()
+                    )
+
                     _listColum.postValue(Pair(list, listTotalMoney))
                 }
 
                 -1 -> {
-                    if (listTotalMoney[0] > 0)
+                    if (listTotalMoney.get(0) > 0) {
                         list.add(
                             Triple(
-                                "Tổng Thu",
-                                getTotalRevenueVersusExpenditure(
-                                    listTotalMoney[0],
-                                    listTotalMoney[1]
+                                "Tổng Thu", getTotalRevenueVersusExpenditure(
+                                    listTotalMoney.get(1),
+                                    listTotalMoney.get(2)
                                 ).toFloat(), Color.BLUE
                             )
                         )
-                    else
+                        list2.add(
+                            getTotalRevenueVersusExpenditure(
+                                listTotalMoney.get(1),
+                                listTotalMoney.get(2)
+                            ).toFloat()
+                        )
+                    } else {
                         list.add(Triple("Tổng Thu", 1f, Color.BLUE))
-                    if (listTotalMoney[1] > 0)
+                        list2.add(1f)
+                    }
+
+                    if (listTotalMoney.get(1) > 0) {
                         list.add(
                             Triple(
                                 "Tổng Chi",
@@ -190,37 +236,38 @@ class HomeViewModel(context: Context) : ViewModel() {
                                 Color.GREEN
                             )
                         )
-                    else list.add(
-                        Triple(
-                            "Tổng Chi",
-                            1f,
-                            Color.GREEN
-                        )
-                    )
-                    if (listTotalMoney.get(2) > 0) {
-                        list.add(
-                            Triple(
-                                "Tiết kiệm",
-                                getTotalRevenueVersusExpenditure(
-                                    listTotalMoney.get(2),
-                                    listTotalMoney.get(1)
-                                ).toFloat(),
-                                Color.RED
-                            )
-                        )
+                        list2.add(100f)
                     } else {
                         list.add(
                             Triple(
-                                "Tiết kiệm",
+                                "Tổng Chi",
                                 1f,
-                                Color.RED
+                                Color.GREEN
                             )
                         )
+                        list2.add(1f)
                     }
+                    list.add(
+                        Triple(
+                            "Tiết kiệm",
+                            getTotalRevenueVersusExpenditure(
+                                listTotalMoney.get(1),
+                                listTotalMoney.get(2)
+                            ).toFloat(),
+                            Color.LTGRAY
+                        )
+                    )
+                    list2.add(
+                        getTotalRevenueVersusExpenditure(
+                            listTotalMoney[1],
+                            listTotalMoney[2]
+                        ).toFloat()
+                    )
                     _listColum.postValue(Pair(list, listTotalMoney))
                 }
             }
         }
+
     }
 
     fun getTotalRevenueVersusExpenditure(totalA: Double, totalB: Double): Double {
@@ -236,21 +283,9 @@ class HomeViewModel(context: Context) : ViewModel() {
 
 
     fun getMillionVND(money: Double): Double {
+        val millions = money / 1000000.0
 
-        val valueInMillions = if (money?.toDouble() == null) 0.0 else money.toDouble() / 1000000
-        val formattedNumber = String.format("%.2f", valueInMillions)
-        val integerPart = formattedNumber.substringBefore(",")
-        val decimalPart = formattedNumber.substringAfter(",")
-        val newNumber = (integerPart.toIntOrNull() ?: 0).toString() + "." + decimalPart
-        return newNumber.toDoubleOrNull() ?: 0.0
-    }
-
-    fun getNumber(money: Double): Double {
-        val formattedNumber = String.format("%.2f", money)
-        val integerPart = formattedNumber.substringBefore(",")
-        val decimalPart = formattedNumber.substringAfter(",")
-        val newNumber = (integerPart.toIntOrNull() ?: 0).toString() + "." + decimalPart
-        return newNumber.toDoubleOrNull() ?: 0.0
+        return BigDecimal(millions).setScale(3, BigDecimal.ROUND_HALF_UP).toDouble()
     }
 }
 

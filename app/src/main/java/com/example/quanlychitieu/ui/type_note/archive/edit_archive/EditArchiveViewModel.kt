@@ -1,11 +1,11 @@
-package com.example.quanlychitieu.ui.type_note.edit_note
+package com.example.quanlychitieu.ui.type_note.archive.edit_archive
 
-import android.content.Context
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import com.example.quanlychitieu.model.Archive
 import com.example.quanlychitieu.model.Note
 import com.example.quanlychitieu.repository.Repository
 import kotlinx.coroutines.CoroutineScope
@@ -17,15 +17,15 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
-class EditNoteViewModel(context: Context) : ViewModel() {
-    private val repository: Repository = Repository(context)
+class EditArchiveViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository: Repository = Repository(application)
     val scope = CoroutineScope(Job() + Dispatchers.Default)
     private var _time: MutableLiveData<String> = MutableLiveData()
     val time: LiveData<String> get() = _time
     private var _titleLength: MutableLiveData<String> = MutableLiveData("  |  0 ký tự")
     val titleLength: LiveData<String> get() = _titleLength
-    private var _listNote: MutableLiveData<List<Note>> = MutableLiveData()
-    val listNote: LiveData<List<Note>> get() = _listNote
+    private var _listNote: MutableLiveData<List<Archive>> = MutableLiveData()
+    val listNote: LiveData<List<Archive>> get() = _listNote
     init {
         getTime()
     }
@@ -50,25 +50,15 @@ class EditNoteViewModel(context: Context) : ViewModel() {
         scope.cancel()
     }
 
-    fun update(note: Note) {
+    fun update(item : Archive) {
         scope.launch {
-            repository.updateNote(note)
+            repository.updateArchive(item)
         }
     }
-    fun add(note: Note){
+    fun add(item: Archive){
         scope.launch {
-            repository.addNote(note)
+            repository.addArchive(item)
         }
     }
 
-    class EditViewModelFactory(private val app:Context) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(EditNoteViewModel::class.java)) {
-                return EditNoteViewModel(app) as T
-            }
-            throw IllegalArgumentException("loiN")
-        }
-
-
-    }
 }

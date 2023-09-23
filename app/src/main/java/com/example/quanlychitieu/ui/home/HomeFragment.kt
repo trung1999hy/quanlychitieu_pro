@@ -35,7 +35,6 @@ class HomeFragment : BaseFragmentWithBinding<FragmentHomeBinding>() {
 
 
     override fun init() {
-        viewModel.init()
         binding.rvList.adapter = spendingAdapter
         binding.rvListCollect.adapter = collectMoneyAdapter
         binding.rvList.addItemDecoration(
@@ -55,7 +54,12 @@ class HomeFragment : BaseFragmentWithBinding<FragmentHomeBinding>() {
         viewModel.getLisCollect()
 
     }
-
+    fun updateData(){
+        viewModel.init()
+        viewModel.getTotalExpenditure()
+        viewModel.getListSpending()
+        viewModel.getLisCollect()
+    }
     override fun initData() {
 
         viewModel.listColum.observe(viewLifecycleOwner) {
@@ -64,8 +68,9 @@ class HomeFragment : BaseFragmentWithBinding<FragmentHomeBinding>() {
         viewModel.money.observe(viewLifecycleOwner) {
             binding.viewTotalMoney.money.text = (it.money ?: 0).toString().plus(" VND")
         }
-        viewModel.listSpending.observe(viewLifecycleOwner) {
+        viewModel.getListSpendingLiveData().observe(viewLifecycleOwner) {
             spendingAdapter.setData(it.ifEmpty { listOf() })
+            updateData()
             if (it.isNotEmpty()) {
                 binding.rvList.visibility = View.VISIBLE
                 binding.textErrSpneding.visibility = View.GONE
@@ -75,8 +80,9 @@ class HomeFragment : BaseFragmentWithBinding<FragmentHomeBinding>() {
             }
         }
 
-        viewModel.listCollect.observe(viewLifecycleOwner) {
+        viewModel.getListLiveData().observe(viewLifecycleOwner) {
             collectMoneyAdapter.setData(it.ifEmpty { listOf() })
+            updateData()
             if (it.isNotEmpty()) {
                 binding.rvListCollect.visibility = View.VISIBLE
                 binding.textErrCollect.visibility = View.GONE

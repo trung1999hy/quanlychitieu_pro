@@ -25,7 +25,6 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 
     fun addFragment(toFragment: Fragment, fromFragment: Fragment) {
         supportFragmentManager.beginTransaction()
-
             .setCustomAnimations(
                 R.anim.slide_in,
                 R.anim.fade_out,

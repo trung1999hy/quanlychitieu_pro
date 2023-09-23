@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/addFolder"
-        android:icon="@drawable/ic_folder_plus"
-        app:showAsAction="always"
-        android:title="" />
-
+    <item
+        android:id="@+id/archive"
+        android:icon="@drawable/archive"
+        android:title="Lưu trữ "
+        app:showAsAction="always" />
 
 </menu>

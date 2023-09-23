@@ -5,4 +5,5 @@
     <string name="post_notifi">thông báo \n</string>
     <string name="channel_post_notifi">thông báo note\n</string>
     <string name="message_purchase_one">%s</string>
+    <string name="amount_gold">%d</string>
 </resources>
