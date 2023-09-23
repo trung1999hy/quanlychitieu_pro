@@ -202,35 +202,32 @@ class PurchaseInAppActivity : AppCompatActivity(), PurchaseInAppAdapter.OnClickL
     }
 
     private fun setupResult(proId: String, quantity: Int) {
-        val intent = Intent()
-        val totalCoin = MainApp.newInstance()?.preference?.getValueCoin() ?: 0
-        val remainCoin = totalCoin + getCoinFromKey(proId) * quantity;
-        MainApp.newInstance()?.preference?.setValueCoin(remainCoin);
+            val totalCoin = MainApp.newInstance()?.preference?.getValueCoin() ?: 0
+            val remainCoin = totalCoin + getCoinFromKey(proId) * quantity;
+            MainApp.newInstance()?.preference?.setValueCoin(remainCoin);
 
-        val dataController = DataController(MainApp.newInstance()?.deviceId ?: "")
-        dataController.setOnListenerFirebase(object : DataController.OnListenerFirebase {
-            override fun onCompleteGetUser(user: User?) {
-            }
+            val dataController = DataController(MainApp.newInstance()?.deviceId ?: "")
+            dataController.setOnListenerFirebase(object : DataController.OnListenerFirebase {
+                override fun onCompleteGetUser(user: User?) {
+                }
 
-            override fun onSuccess() {
-                Toast.makeText(
-                    this@PurchaseInAppActivity,
-                    "Xin chúc mừng, bạn đã mua gold thành công!",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+                override fun onSuccess() {
+                    Toast.makeText(
+                        this@PurchaseInAppActivity,
+                        "Xin chúc mừng, bạn đã mua gold thành công!",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
 
-            override fun onFailure() {
-                Toast.makeText(
-                    this@PurchaseInAppActivity,
-                    "Có lỗi kết nối đến server!",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        })
-        dataController.updateDocument(totalCoin)
-        setResult(RESULT_OK, intent)
-        runOnUiThread { onBackPressed() }
+                override fun onFailure() {
+                    Toast.makeText(
+                        this@PurchaseInAppActivity,
+                        "Có lỗi kết nối đến server!",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            })
+            dataController.updateDocument(totalCoin)
     }
 
     private fun getCoinFromKey(coinId: String): Int {
