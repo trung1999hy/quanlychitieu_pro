@@ -26,7 +26,6 @@
         android:layout_marginStart="@dimen/_12dp"
         android:drawableEnd="@drawable/ic_coin"
         android:drawablePadding="6dp"
-        android:text="5"
         android:textColor="@color/black"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
