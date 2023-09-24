@@ -189,6 +189,7 @@ class NoteTypeFragment : BaseFragmentWithBinding<FragmentNoteTypeBinding>() {
                     binding.coin.text = String.format(resources.getString(R.string.amount_gold), MainApp.newInstance()?.preference?.getValueCoin()  )
                 } ?: kotlin.run {
                     setDataBaseGold()
+                    binding.coin.text = String.format(resources.getString(R.string.amount_gold), MainApp.newInstance()?.preference?.getValueCoin()  )
                 }
             }
 
