@@ -13,5 +13,6 @@ data class Note(
     @ColumnInfo(name = "container") var container: String,
     @ColumnInfo(name = "time") var time: String = "",
     @ColumnInfo(name = "timeset") var timeSet: String = "",
-    @ColumnInfo(name = "code") var code : Int = 0
+    @ColumnInfo(name = "code") var code : Int = 0,
+    @ColumnInfo(name = "pass") var password : String = ""
 ) : Serializable

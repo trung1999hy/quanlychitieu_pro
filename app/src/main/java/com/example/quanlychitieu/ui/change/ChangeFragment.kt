@@ -65,7 +65,6 @@ class ChangeFragment : BaseFragmentWithBinding<FragmentChangeBinding>() {
                     viewModel.setMoney(money) {
                         mainActivity.onBackPressed()
                     }
-
                 }
             }
         }

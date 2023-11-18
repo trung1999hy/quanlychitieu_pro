@@ -1,6 +1,7 @@
 package com.example.quanlychitieu.ui.type_note.note
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quanlychitieu.model.Note
@@ -18,6 +19,13 @@ class NoteAdapter(
         val itemMoreClick: ((Note) -> Unit)? = null
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Note) {
+            if (data.password.isNullOrEmpty()) {
+                binding.viewLock.visibility = View.GONE
+                binding.viewLayout.visibility = View.VISIBLE
+            }else{
+                binding.viewLock.visibility = View.VISIBLE
+                binding.viewLayout.visibility = View.GONE
+            }
             binding.title.text = data.title
             binding.date.text = data.time
             binding.container.text = data.container

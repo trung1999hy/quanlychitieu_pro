@@ -19,10 +19,13 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
+            android:id="@+id/view_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:visibility="gone"
             android:weightSum="10">
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -78,5 +81,11 @@
                 android:textSize="14dp" />
 
         </LinearLayout>
+        <ImageView
+            android:id="@+id/view_lock"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_margin="24dp"
+            android:src="@drawable/locked"/>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

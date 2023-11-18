@@ -23,7 +23,6 @@ class MainFragment : BaseFragmentWithBinding<FragmentMainBinding>() {
         viewPager.setData(mainActivity.getListFragment())
         binding.mainViewPager.adapter = viewPager
         binding.mainViewPager.offscreenPageLimit = 4
-
     }
 
     override fun initData() {

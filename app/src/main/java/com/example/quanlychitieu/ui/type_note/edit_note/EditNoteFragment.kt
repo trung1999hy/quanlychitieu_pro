@@ -37,6 +37,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.example.quanlychitieu.ui.inapp.PurchaseInAppActivity
 import com.example.quanlychitieu.utils.DataController
 import com.thn.quanlychitieu.R
+import com.thn.quanlychitieu.databinding.DialogShetPasswordBinding
 import com.thn.quanlychitieu.databinding.FragmentBottomSheetDialogBinding
 import com.thn.quanlychitieu.databinding.FragmentEditNoteBinding
 import java.util.Calendar
@@ -260,14 +261,22 @@ class EditNoteFragment : BaseFragmentWithBinding<FragmentEditNoteBinding>() {
 
     @RequiresApi(Build.VERSION_CODES.M)
     fun showBottomSheetDialog() {
+        val isSetPassword = note?.password.isNullOrEmpty()
         val binding =
             FragmentBottomSheetDialogBinding.inflate(
                 LayoutInflater.from(requireContext()),
                 null,
                 false
             )
+        if (!isSetPassword) {
+            binding.txtText.text = "Xóa mật khẩu"
+        }
         val dialogbottomshet = BottomSheetDialog(requireContext())
         dialogbottomshet.setContentView(binding.root)
+        binding.viewPassword.click {
+            showSetPasswordDialog()
+            dialogbottomshet.dismiss()
+        }
         binding.viewRemind.click {
             val dialog = AlertDialog.Builder(requireContext())
             dialog.setMessage("Bạn có muốn đặt nhắc nhở không ?")
@@ -291,7 +300,7 @@ class EditNoteFragment : BaseFragmentWithBinding<FragmentEditNoteBinding>() {
                         )
                     )
                 }
-
+                dialog.dismiss()
             }
             dialog.setNegativeButton("Cancel") { dialog, which ->
                 dialog.dismiss()
@@ -299,6 +308,13 @@ class EditNoteFragment : BaseFragmentWithBinding<FragmentEditNoteBinding>() {
             dialog.show()
         }
         dialogbottomshet.show()
+    }
+    private fun showSetPasswordDialog(){
+        val dialogShetPasswordBinding = DialogShetPasswordBinding.inflate(LayoutInflater.from(requireContext()),null, false)
+        val dialog = BottomSheetDialog(requireContext())
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.setContentView(dialogShetPasswordBinding.root)
+        dialog.show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
