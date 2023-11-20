@@ -25,17 +25,15 @@ import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
-
 import com.example.quanlychitieu.base.BaseFragmentWithBinding
-
 import com.example.quanlychitieu.model.Note
 import com.example.quanlychitieu.receiver.AlarmReceiver
 import com.example.quanlychitieu.ui.MainApp
+import com.example.quanlychitieu.ui.inapp.PurchaseInAppActivity
+import com.example.quanlychitieu.utils.DataController
 import com.example.quanlychitieu.utils.click
 import com.example.quanlychitieu.utils.showKeyboard
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.example.quanlychitieu.ui.inapp.PurchaseInAppActivity
-import com.example.quanlychitieu.utils.DataController
 import com.thn.quanlychitieu.R
 import com.thn.quanlychitieu.databinding.DialogShetPasswordBinding
 import com.thn.quanlychitieu.databinding.FragmentBottomSheetDialogBinding
@@ -274,7 +272,7 @@ class EditNoteFragment : BaseFragmentWithBinding<FragmentEditNoteBinding>() {
         val dialogbottomshet = BottomSheetDialog(requireContext())
         dialogbottomshet.setContentView(binding.root)
         binding.viewPassword.click {
-            showSetPasswordDialog()
+            showSetPasswordDialog(isSetPassword)
             dialogbottomshet.dismiss()
         }
         binding.viewRemind.click {
@@ -309,9 +307,50 @@ class EditNoteFragment : BaseFragmentWithBinding<FragmentEditNoteBinding>() {
         }
         dialogbottomshet.show()
     }
-    private fun showSetPasswordDialog(){
-        val dialogShetPasswordBinding = DialogShetPasswordBinding.inflate(LayoutInflater.from(requireContext()),null, false)
+
+    private fun showSetPasswordDialog(isSetPassword: Boolean) {
+        val dialogShetPasswordBinding =
+            DialogShetPasswordBinding.inflate(LayoutInflater.from(requireContext()), null, false)
         val dialog = BottomSheetDialog(requireContext())
+        if (!isSetPassword) {
+            dialogShetPasswordBinding.title.text = "Xóa mật khẩu"
+        }
+        dialogShetPasswordBinding.btnOke.click {
+            if (!dialogShetPasswordBinding.edPassword.text.toString().trim().isNullOrBlank()) {
+                if (isSetPassword) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Cài đặt mật khẩu thành công ",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    dialog.dismiss()
+                } else {
+
+                    if (dialogShetPasswordBinding.edPassword.text.toString() == note?.password) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Đã xóa mật khẩu thành công",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        dialog.dismiss()
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Mật khẩu không chính xác",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
+            } else {
+                Toast.makeText(requireContext(), "Mật khẩu không được để trống", Toast.LENGTH_SHORT)
+                    .show()
+            }
+
+        }
+        dialogShetPasswordBinding.btnCancel.click {
+            dialog.dismiss()
+        }
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.setContentView(dialogShetPasswordBinding.root)
         dialog.show()
