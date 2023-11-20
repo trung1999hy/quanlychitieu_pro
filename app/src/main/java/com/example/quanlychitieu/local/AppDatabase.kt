@@ -19,7 +19,7 @@ import com.example.quanlychitieu.model.NoteType
 
 @Database(
     entities = [Money::class, Spending::class, Collect::class, Note::class, NoteType::class, Archive::class],
-    version = 3
+    version = 4
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getDatabaseDao(): MoneyDao

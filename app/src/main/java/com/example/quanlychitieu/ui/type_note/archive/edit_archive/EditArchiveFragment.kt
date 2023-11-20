@@ -62,7 +62,6 @@ class EditArchiveFragment : BaseFragmentWithBinding<FragmentEditArchiveragmentBi
                 binding.check.visibility = View.GONE
             }
         }
-
     }
 
     override fun initAction() {
